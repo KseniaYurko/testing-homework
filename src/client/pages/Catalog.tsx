@@ -11,12 +11,13 @@ const bem = cn('Catalog');
 export const Catalog: React.FC = () => {
     const dispatch = useDispatch();
     const products = useSelector((s: ApplicationState) => s.products);
+    
 
     useEffect(() => {
         dispatch(productsLoad())
     }, []);
 
-    const items: React.ReactNode = products ?
+    let items: React.ReactNode = products ?
         products.map(p => (
             <div key={p.id} data-testid={p.id} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <ProductItem product={p} />
@@ -24,6 +25,8 @@ export const Catalog: React.FC = () => {
         )) :
         'LOADING';
 
+    items = undefined;
+        
     return (
         <div className={bem()}>
             <Helmet title="Catalog" />
