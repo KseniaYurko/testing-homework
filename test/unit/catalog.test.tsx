@@ -6,7 +6,8 @@ import '@testing-library/jest-dom'
 import { queryAllByTestId, waitFor } from '@testing-library/react';
 import { CartState, Product } from "../../src/common/types";
 import { commerce } from "faker";
-import {screen} from '@testing-library/dom'
+import { screen } from '@testing-library/dom'
+import products from "../helpers/mocks/mockProducts";
 
 
 function initProducts(): Product[] {
@@ -29,63 +30,52 @@ function initProducts(): Product[] {
 // jest.mock('axios');
 
 describe('Тестирование требований каталога', () => {
-    test('Каталог должен отображать данные с сервера', () => {
-        const products = initProducts();
+    test('Каталог должен отображать данные с сервера', async () => {
+        // const products = initProducts();
         console.log(products);
 
-        renderTestApp({ initialRoute: "/catalog" });
 
-        for(const product of products){
-            const productIdExist = screen.queryAllByTestId(product.id)
-            expect(productIdExist).not.toBe([]);
-        }
+        const { getAllByTestId } = renderTestApp({ initialRoute: "/catalog" });
 
+        await waitFor(() => {
+            for(const dataEl of products){
+                const item = getAllByTestId(`${dataEl.id}`);
+                expect(item.length).toBe(2);
+                item.forEach((el) => {
+                    expect(el).toBeInTheDocument();
+                });
+            }
+        })  
     })
 
+    test('Для каждого товара в каталоге отображается название, цена и ссылка на страницу с подробной информацией о товаре', async () => {
+        // const products = initProducts();
 
+        const { getAllByTestId } = renderTestApp({ initialRoute: "/catalog" });
+        await waitFor(() => {
+            for (const product of products) {
+                
+                const item = getAllByTestId(`${product.id}`);
+                var re = new RegExp(
+                    `<h5 class="ProductItem-Name card-title">${product.name}</h5>`
+                );
+                console.log(item[1].outerHTML);
+                expect(item[1].outerHTML).toMatch(re);
 
+                // expect(item.length).toBe(2);
 
-    // test('Каталог должен отображать данные с сервера', async () => {
-    //     const response = mockProducts;
-    //     // console.log(response);
-
-    //     (axios.get as jest.Mock).mockResolvedValue(response);
-    //     const { getAllByTestId } = renderTestApp({ initialRoute: "/catalog" });
-
-    //     await waitFor(() => {
-    //         expect(axios.get as jest.Mock).toBeCalled();
-    //         for(const dataEl of response.data){
-    //             const item = getAllByTestId(`${dataEl.id}`);
-    //             expect(item.length).toBe(2);
-    //             item.forEach((el) => {
-    //                 expect(el).toBeInTheDocument();
-    //             });
-    //         }
-    //     })
-    // });
-
-    // test('Для каждого товара в каталоге отображается название, цена и ссылка на страницу с подробной информацией о товаре', async () => {
-    //     const response = mockProducts;
-
-    //     (axios.get as jest.Mock).mockResolvedValue(response);
-    //     const { getAllByTestId } = renderTestApp({ initialRoute: "/catalog" });
-    //     console.log(getAllByTestId);
-
-    //     response.data.forEach(async (value) => {
-    //         const item = await getAllByTestId(`${value.id}`);
-    //         expect(item).toBeInTheDocument();
-
-    //         // const name = item.querySelector('.ProductItem-Name');
-    //         // const price = item.querySelector('.ProductItem-Price');
-    //         // const link = item.querySelector('.ProductItem-DetailsLick');
-
-    //         // expect(name).toHaveTextContent(value.name);
-    //         // expect(price).toHaveTextContent(`${value.price}`);
-    //         // expect(link).toHaveAttribute("href", `/catalog/${value.id}`);
-    //     });
-    // });
-
-
-
-
+                // item.forEach((el) => {
+                //     const name = el.querySelector('.ProductItem-Name');
+                //     const price = el.querySelector('.ProductItem-Price');
+                //     const link = el.querySelector('.ProductItem-DetailsLink');
+                //     console.log(name)
+                //     expect(name).toHaveTextContent(product.name);
+                //     expect(price).toHaveTextContent(`${product.price}`);
+                //     expect(link).toHaveAttribute("href", `/catalog/${product.id}`);
+                // });
+            }
+            
+        
+        });
+    });
 });

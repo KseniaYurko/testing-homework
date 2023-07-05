@@ -1,27 +1,28 @@
-export default [
-        {
-            id: 1,
-            name: 'first_product',
-            price: 100,
-        },
-        {
-            id: 2,
-            name: 'second_product',
-            price: 200,
-        },
-        {
-            id: 3,
-            name: 'third_product',
-            price: 300,
-        },
-        {
-            id: 4,
-            name: 'fourth_product',
-            price: 400,
-        },
-        {
-            id: 5,
-            name: 'fifth_product',
-            price: 500,
-        },
-    ]
+import { render } from "@testing-library/react";
+import React from "react";
+
+import { Provider } from "react-redux";
+import { MemoryRouter } from "react-router-dom";
+
+import { commerce } from "faker";
+import { Product } from "../../../src/common/types";
+
+function initProducts(): Product[] {
+    const products: Product[] = []
+  
+    for(let id = 0; id < 10; id++) {
+        products.push({
+            id,
+            name: `${commerce.productAdjective()} ${commerce.product()}`,
+            description: commerce.productDescription(),
+            price: Number(commerce.price()),
+            color: commerce.color(),
+            material: commerce.productMaterial(),
+        });
+    }
+  
+    return products;
+  }
+
+  const products = initProducts();
+  export default products;

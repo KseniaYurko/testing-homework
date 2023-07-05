@@ -25,7 +25,7 @@ export const Catalog: React.FC = () => {
         )) :
         'LOADING';
 
-    items = undefined;
+    // items = undefined;
         
     return (
         <div className={bem()}>
